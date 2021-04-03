@@ -12,6 +12,14 @@ class MaxHeap {
         $this->arr = [null];
     }
 
+    public function print() {
+        echo json_encode($this->arr)."\n";
+    }
+
+    public function printSize() {
+        echo $this->size."\n";
+    }
+
     public function getMax() {
         if ($this->size == 0) return null;
         return $this->arr[1];
@@ -24,15 +32,16 @@ class MaxHeap {
     }
 
     public function deleteMax() {
-        if ($this->_isEmpty()) return;
+        if ($this->_isEmpty() || $this->size == 1) return;
         $this->arr[1] = $this->arr[$this->size--];
         $this->heapifyDown();
     }
 
     private function heapifyDown() {
         $index = 1;
-        while ($index <= $this->size) {
+        while ($index < $this->size) {
             $maxChildIndex = $this->_getMaxChildIndex($index);
+            if ($maxChildIndex == -1) break;
             if ($this->arr[$index] >= $this->arr[$maxChildIndex]) break;
             $tmp = $this->arr[$index];
             $this->arr[$index] = $this->arr[$maxChildIndex];
@@ -43,29 +52,28 @@ class MaxHeap {
 
     //向上堆化 $i是下标
     private function heapifyUp($i) {
-        if ($i <= 1) return;
         $newVal = $this->arr[$i];
-        $index = $i;
-        while ($this->_getParentVal($index) < $newVal) {
-            $this->arr[$index] = $this->_getParentVal($index);
-            $index = intval(floor($index/2));
+        while ($i > 1 && $this->_getParentVal($i) < $newVal) {
+            $this->arr[$i] = $this->_getParentVal($i);
+            $i = intval(floor($i/2));
         }
-        $this->arr[$index] = $newVal;
+        $this->arr[$i] = $newVal;
     }
 
     private function _isEmpty() {
-        if ($this->size == 0) return true;
-        return false;
+        return $this->size == 0;
     }
 
     private function _isFull() {
-        if ($this->size == $this->cap) return true;
-        return false;
+        return $this->size == $this->cap;
     }
 
     private function _getMaxChildIndex($i) {
-        $leftVal = $this->arr[2*$i];
-        $rightVal = $this->arr[2*$i + 1];
+        $leftVal = 2 * $i <= $this->size ? $this->arr[2*$i] : null;
+        $rightVal = 2*$i + 1 <= $this->size ? $this->arr[2*$i + 1] : null;
+        if (is_null($leftVal) && is_null($rightVal)) return -1;
+        if (is_null($rightVal)) return $leftVal;
+        if (is_null($leftVal)) return $rightVal;
         return $leftVal >= $rightVal ? 2*$i : 2*$i + 1;
     }
 

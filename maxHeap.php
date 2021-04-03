@@ -12,8 +12,16 @@ class MaxHeap {
         $this->arr = [null];
     }
 
+    public function getSize() {
+        return $this->size;
+    }
+
     public function print() {
-        echo json_encode($this->arr)."\n";
+        $res = [];
+        for ($i = 1; $i <= $this->size; $i++) {
+            $res[] = $this->arr[$i];
+        }
+        echo '['.implode($res, ', ')."]\n";
     }
 
     public function printSize() {
@@ -32,22 +40,20 @@ class MaxHeap {
     }
 
     public function deleteMax() {
-        if ($this->_isEmpty() || $this->size == 1) return;
-        $this->arr[1] = $this->arr[$this->size--];
-        $this->heapifyDown();
+        if ($this->_isEmpty()) return;
+        $this->arr[1] = $this->arr[$this->size--];  //把排在最后的元素放到第一位
+        $this->heapifyDown(1);
     }
 
-    private function heapifyDown() {
-        $index = 1;
-        while ($index < $this->size) {
-            $maxChildIndex = $this->_getMaxChildIndex($index);
-            if ($maxChildIndex == -1) break;
-            if ($this->arr[$index] >= $this->arr[$maxChildIndex]) break;
-            $tmp = $this->arr[$index];
-            $this->arr[$index] = $this->arr[$maxChildIndex];
-            $this->arr[$maxChildIndex] = $tmp;
-            $index = $maxChildIndex;
+    private function heapifyDown($i) {
+        $tmp = $this->arr[$i];
+        while (2*$i < $this->size) {
+            $maxChildIndex = $this->_getMaxChildIndex($i);
+            if ($tmp >= $this->arr[$maxChildIndex]) break;
+            $this->arr[$i] = $this->arr[$maxChildIndex];    //往上顶
+            $i = $maxChildIndex;    //往下沉
         }
+        $this->arr[$i] = $tmp;
     }
 
     //向上堆化 $i是下标
@@ -69,16 +75,11 @@ class MaxHeap {
     }
 
     private function _getMaxChildIndex($i) {
-        $leftVal = 2 * $i <= $this->size ? $this->arr[2*$i] : null;
-        $rightVal = 2*$i + 1 <= $this->size ? $this->arr[2*$i + 1] : null;
-        if (is_null($leftVal) && is_null($rightVal)) return -1;
-        if (is_null($rightVal)) return $leftVal;
-        if (is_null($leftVal)) return $rightVal;
-        return $leftVal >= $rightVal ? 2*$i : 2*$i + 1;
+        return $this->arr[2*$i] >= $this->arr[2*$i + 1] ? 2*$i : 2*$i + 1;
     }
 
     //获取当前下标的父节点的值
     private function _getParentVal($i) {
         return $this->arr[intval(floor($i/2))];
     }
-}
+} 

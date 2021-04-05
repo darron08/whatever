@@ -45,9 +45,10 @@ class MaxHeap {
         $this->heapifyDown(1);
     }
 
+    //向下堆化 $i是下标
     private function heapifyDown($i) {
         $tmp = $this->arr[$i];
-        while (2*$i < $this->size) {
+        while (2*$i <= $this->size) {
             $maxChildIndex = $this->_getMaxChildIndex($i);
             if ($tmp >= $this->arr[$maxChildIndex]) break;
             $this->arr[$i] = $this->arr[$maxChildIndex];    //往上顶
@@ -82,4 +83,4 @@ class MaxHeap {
     private function _getParentVal($i) {
         return $this->arr[intval(floor($i/2))];
     }
-} 
+}
